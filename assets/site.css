@@ -419,8 +419,13 @@ h3 {
 
 /* Legal documents (Termly text). Override its inline styles to match the site. */
 .legal {
+  padding-top: 24px;
   color: #d6d9df;
   font-size: 16px;
+}
+
+.legal ul {
+  list-style-type: square;
 }
 
 .legal * {
