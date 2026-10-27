@@ -3,7 +3,7 @@
 Static website for the Ruckus iOS app, hosted on GitHub Pages with the custom domain in `CNAME`.
 
 - `/` home page
-- `/support/` contact form (Web3Forms; replace `WEB3FORMS_ACCESS_KEY` with the site's access key) and FAQ
+- `/support/` contact form (Formspree form `mvkkadnr`, delivered to the Ruckus inbox) and FAQ
 - `/privacy/` Privacy Policy and `/terms/` Terms of Service, generated with Termly
 
 ## Updating the policies

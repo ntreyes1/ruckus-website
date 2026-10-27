@@ -32,13 +32,11 @@
       <div class="support-grid">
         <section class="card" aria-labelledby="contact-title">
           <h2 id="contact-title" style="font-size: 24px; margin-bottom: 20px">Contact us</h2>
-          <!-- Messages are delivered by Web3Forms to the Ruckus inbox; the address never appears on this site. -->
-          <form id="contact" class="form" action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="WEB3FORMS_ACCESS_KEY" />
-            <input type="hidden" name="from_name" value="Ruckus website" />
-            <input type="hidden" name="subject" value="Ruckus support request" />
-            <input type="hidden" name="redirect" value="https://ruckusapp.ai/support/?sent=1" />
-            <input type="checkbox" name="botcheck" class="hidden-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <!-- Messages are delivered by Formspree to the Ruckus inbox; the address never appears on this site. -->
+          <form id="contact" class="form" action="https://formspree.io/f/mvkkadnr" method="POST">
+            <input type="hidden" name="_subject" value="Ruckus support request" />
+            <!-- Spam trap: people never see or fill this field. -->
+            <input type="text" name="_gotcha" class="hidden-field" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
             <div class="field">
               <label for="topic">Topic</label>
@@ -139,7 +137,7 @@
 
     <script>
       // Sends the form without leaving the page. Without JavaScript, the form still posts and
-      // Web3Forms redirects back here with ?sent=1.
+      // Formspree shows its own confirmation page.
       (function () {
         const form = document.getElementById("contact");
         const status = document.getElementById("status");
@@ -149,29 +147,19 @@
           status.textContent = text;
         };
 
-        if (new URLSearchParams(location.search).get("sent") === "1") {
-          show("success", "Thanks! Your message was sent. We'll reply by email.");
-        }
-        if (form.access_key.value === "WEB3FORMS_ACCESS_KEY") {
-          button.disabled = true;
-          show("error", "The contact form isn't connected yet.");
-          return;
-        }
-
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
-          const data = Object.fromEntries(new FormData(form));
-          data.subject = "Ruckus: " + data.topic;
+          const data = new FormData(form);
+          data.set("_subject", "Ruckus: " + data.get("topic"));
           button.disabled = true;
           button.textContent = "Sending…";
           try {
-            const response = await fetch("https://api.web3forms.com/submit", {
+            const response = await fetch(form.action, {
               method: "POST",
-              headers: { "Content-Type": "application/json", Accept: "application/json" },
-              body: JSON.stringify(data),
+              headers: { Accept: "application/json" },
+              body: data,
             });
-            const result = await response.json();
-            if (!result.success) throw new Error(result.message);
+            if (!response.ok) throw new Error("Formspree returned " + response.status);
             form.reset();
             show("success", "Thanks! Your message was sent. We'll reply by email.");
           } catch {
